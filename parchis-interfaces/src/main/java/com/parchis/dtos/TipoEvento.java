@@ -8,6 +8,7 @@ import java.io.Serializable;
 public enum TipoEvento implements Serializable {
     MENSAJE_CHAT,
     SALA_CREADA,
+    SALA_ACTUALIZADA,
     JUGADOR_UNIDO,
     JUGADOR_LISTO,
     PARTIDA_INICIADA,
