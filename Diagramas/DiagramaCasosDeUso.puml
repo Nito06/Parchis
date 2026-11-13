@@ -1,0 +1,59 @@
+@startuml DiagramaCasosDeUso
+left to right direction
+skinparam packageStyle rectangle
+skinparam roundcorner 10
+skinparam shadowing true
+skinparam defaultFontName "Segoe UI"
+skinparam actor {
+    BackgroundColor #FFFFFF
+    BorderColor #2C3E50
+}
+skinparam usecase {
+    BackgroundColor #FFFFFF
+    BorderColor #2C3E50
+    ArrowColor #2C3E50
+}
+
+actor "Jugador Humano" as Humano
+actor "Sistema / Bot (CPU)" as Bot
+
+rectangle "Juego Parchís" {
+    usecase "Iniciar Aplicación" as UC_IniciarApp
+    usecase "Configurar Partida" as UC_Configurar
+    usecase "Elegir Color de Ficha\n(Rojo, Verde, Azul, Amarillo)" as UC_ElegirColor
+    usecase "Elegir Cantidad de Jugadores\n(2, 3 o 4)" as UC_ElegirJugadores
+    usecase "Lanzar Dado" as UC_LanzarDado
+    usecase "Seleccionar Ficha Válida" as UC_SeleccionarFicha
+    usecase "Mover Ficha con Animación" as UC_MoverFicha
+    usecase "Sacar Ficha de Casa (Sacar 5)" as UC_SacarBase
+    usecase "Comer Ficha Rival" as UC_ComerFicha
+    usecase "Entrar a Pasillo de Meta" as UC_EntrarMeta
+    usecase "Coronar Ficha en Centro" as UC_Coronar
+    usecase "Ejecutar Turno de Bot Automático" as UC_TurnoBot
+    usecase "Consultar Marcador y Turno" as UC_ConsultarEstado
+    usecase "Volver al Menú Principal" as UC_VolverMenu
+    usecase "Salir del Juego" as UC_Salir
+}
+
+Humano --> UC_IniciarApp
+Humano --> UC_Configurar
+Humano --> UC_LanzarDado
+Humano --> UC_SeleccionarFicha
+Humano --> UC_ConsultarEstado
+Humano --> UC_VolverMenu
+Humano --> UC_Salir
+
+UC_Configurar ..> UC_ElegirColor : <<include>>
+UC_Configurar ..> UC_ElegirJugadores : <<include>>
+
+UC_SeleccionarFicha ..> UC_MoverFicha : <<include>>
+UC_MoverFicha <.. UC_SacarBase : <<extend>>
+UC_MoverFicha <.. UC_ComerFicha : <<extend>>
+UC_MoverFicha <.. UC_EntrarMeta : <<extend>>
+UC_EntrarMeta <.. UC_Coronar : <<extend>>
+
+Bot --> UC_TurnoBot
+UC_TurnoBot ..> UC_LanzarDado : <<include>>
+UC_TurnoBot ..> UC_MoverFicha : <<include>>
+
+@enduml

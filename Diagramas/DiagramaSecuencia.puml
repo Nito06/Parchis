@@ -1,0 +1,111 @@
+@startuml DiagramaSecuencia
+autonumber
+skinparam roundcorner 10
+skinparam shadowing true
+skinparam defaultFontName "Segoe UI"
+skinparam sequence {
+    ArrowColor #2C3E50
+    ActorBorderColor #2C3E50
+    LifeLineBorderColor #2C3E50
+    LifeLineBackgroundColor #EAECEE
+    ParticipantBorderColor #2C3E50
+    ParticipantBackgroundColor #FFFFFF
+}
+
+actor "Jugador Humano" as Jugador
+participant "ParchisFames\n(Menú)" as Menu
+participant "SeleccionPanel\n(Config)" as Config
+participant "JuegoPanel\n(Controlador)" as Juego
+participant "TableroPanel\n(Motor Gráfico)" as Tablero
+participant "HiloMovimiento\n(Thread)" as Hilo
+participant "BotThread\n(Thread)" as HiloBot
+
+== 1. Configuración e Inicio de Partida ==
+Jugador -> Menu: Clic "Iniciar Juego"
+activate Menu
+Menu -> Config: new SeleccionPanel(NavegacionListener)
+Menu -> Config: Mostrar en JDialog modal
+deactivate Menu
+
+activate Config
+Jugador -> Config: Selecciona Jugadores (4) y Color ("Rojo")
+Jugador -> Config: Clic "Aceptar"
+Config -> Menu: iniciarPartida(4, "Rojo")
+deactivate Config
+
+activate Menu
+Menu -> Menu: dialogoSeleccion.dispose()
+Menu -> Menu: dispose()
+Menu -> Juego: new JuegoPanel()
+activate Juego
+Juego -> Tablero: new TableroPanel()
+activate Tablero
+Tablero -> Tablero: calcularGeometria()
+Tablero -> Tablero: inicializarFichas()
+deactivate Tablero
+Menu -> Juego: inicializarJuego(4, "Rojo")
+Juego -> Tablero: configurarPartida(4, "Rojo")
+Juego -> Juego: prepararTurno() (Turno Rojo)
+deactivate Menu
+
+== 2. Turno del Jugador Humano (Rojo) ==
+Jugador -> Juego: Clic "Lanzar Dado"
+Juego -> Juego: Timer animación dado (500ms)
+Juego -> Tablero: setTurno(JUGADOR_ROJO, 5)
+activate Tablero
+Tablero -> Tablero: getFichasMovibles(JUGADOR_ROJO, 5)
+Tablero -> Tablero: Iniciar pulso dorado en fichas de base
+deactivate Tablero
+
+Jugador -> Tablero: Clic sobre Ficha 1 en base
+activate Tablero
+Tablero -> Hilo: new Thread(ejecutarMovimientoConHilo)
+activate Hilo
+
+loop 12 frames (Salida de base a casilla 39)
+    Hilo -> Tablero: animX, animY interpolados
+    Hilo -> Tablero: repaint()
+    Hilo -> Hilo: Thread.sleep(20ms)
+end
+
+Hilo -> Tablero: verificarCaptura(Ficha 1)
+alt Si hay ficha rival en casilla no segura
+    Hilo -> Tablero: Devolver ficha rival a base
+    Hilo -> Juego: listener.onFichaComida("Rojo", rival)
+end
+
+Hilo -> Juego: listener.onMovimientoFinalizado()
+deactivate Hilo
+deactivate Tablero
+
+Juego -> Juego: actualizarEstadoFichas()
+Juego -> Juego: cambiarTurno() -> Turno 1 (Verde / Bot)
+
+== 3. Turno del Rival Automático (Verde - Bot) ==
+Juego -> HiloBot: new Thread(ejecutarTurnoBot)
+activate HiloBot
+HiloBot -> HiloBot: Thread.sleep(800ms)
+HiloBot -> Juego: Animación de giro de dado
+HiloBot -> HiloBot: valorDado = Random(1..6)
+HiloBot -> Tablero: getFichasMovibles(JUGADOR_VERDE, valorDado)
+activate Tablero
+Tablero --> HiloBot: listaFichasMovibles
+deactivate Tablero
+
+alt Fichas movibles > 0
+    HiloBot -> Tablero: ejecutarMovimientoConHilo(mejorFicha, valorDado)
+    activate Tablero
+    Tablero -> Hilo: Animación paso a paso de ficha Verde
+    activate Hilo
+    Hilo -> Juego: listener.onMovimientoFinalizado()
+    deactivate Hilo
+    deactivate Tablero
+else Sin movimientos válidos
+    HiloBot -> Juego: Mensaje "No puede mover"
+    HiloBot -> Juego: cambiarTurno()
+end
+deactivate HiloBot
+
+Juego -> Juego: cambiarTurno() -> Siguiente jugador activo
+
+@enduml

@@ -1,0 +1,187 @@
+@startuml DiagramaClases
+skinparam classAttributeIconSize 0
+skinparam monochrome false
+skinparam roundcorner 10
+skinparam shadowing true
+skinparam defaultFontName "Segoe UI"
+skinparam class {
+    BackgroundColor #FFFFFF
+    ArrowColor #2C3E50
+    BorderColor #2C3E50
+}
+
+package "parchis" {
+
+    class Parchis {
+        + {static} main(args: String[]): void
+    }
+
+    class ParchisFames extends javax.swing.JFrame {
+        - LblDados: JLabel
+        - LblParchisTexto: JLabel
+        - btnIniciar: JButton
+        - btnSalir: JButton
+        - jPanel1: JPanel
+        - jLabel1: JLabel
+        + ParchisFames()
+        - initComponents(): void
+        - btnIniciarActionPerformed(evt: ActionEvent): void
+        - btnSalirActionPerformed(evt: ActionEvent): void
+        + {static} main(args: String[]): void
+    }
+
+    class SeleccionPanel extends javax.swing.JPanel {
+        - listener: NavegacionListener
+        - grupoColores: ButtonGroup
+        - grupoJugadores: ButtonGroup
+        - rbRojo: JRadioButton
+        - rbVerde: JRadioButton
+        - rbAzul: JRadioButton
+        - rbAmarillo: JRadioButton
+        - rbDos: JRadioButton
+        - rbTres: JRadioButton
+        - rbCuatro: JRadioButton
+        - btnAceptar: JButton
+        - btnVolver: JButton
+        + SeleccionPanel()
+        + SeleccionPanel(listener: NavegacionListener)
+        - initComponents(): void
+        - aceptarSeleccion(): void
+        - volverMenu(): void
+    }
+
+    interface "SeleccionPanel.NavegacionListener" as NavegacionListener {
+        + iniciarPartida(numeroJugadores: int, color: String): void
+        + volverAlMenu(): void
+    }
+
+    class JuegoPanel extends javax.swing.JPanel {
+        - turnoActual: int
+        - valorDado: int
+        - yaLanzoDado: boolean
+        - numeroJugadoresTotales: int
+        - colorHumano: String
+        - indiceHumano: int
+        - jugadorActivo: boolean[4]
+        - tableroPanel: TableroPanel
+        - btnLanzarDado: JButton
+        - btnVolverMenu: JButton
+        - jLabel1: JLabel
+        - lblDADO: JLabel
+        - lblEstadoAmarillo: JLabel
+        - lblEstadoAzul: JLabel
+        - lblEstadoRojo: JLabel
+        - lblEstadoVerde: JLabel
+        - lblMensaje: JLabel
+        - lblNombreTurno: JLabel
+        - lblTituloJugadores: JLabel
+        - lblTituloTurno: JLabel
+        + JuegoPanel()
+        - initComponents(): void
+        - configurarTablero(): void
+        - configurarJugadoresActivos(): void
+        + inicializarJuego(numJugadores: int, colorElegido: String): void
+        - lanzarDadoYProcesar(): void
+        - ejecutarTurnoBot(): void
+        - prepararTurno(): void
+        - cambiarTurno(): void
+        - actualizarEstadoFichas(): void
+        - btnLanzarDadoActionPerformed(evt: ActionEvent): void
+        - btnVolverMenuActionPerformed(evt: ActionEvent): void
+    }
+
+    interface "TableroPanel.TableroListener" as TableroListener {
+        + onMovimientoFinalizado(): void
+        + onMensaje(mensaje: String): void
+        + onFichaComida(jugadorComedor: String, jugadorComido: String): void
+        + onVictoria(jugadorGanador: String): void
+    }
+
+    class TableroPanel extends javax.swing.JPanel {
+        + {static} JUGADOR_ROJO: int = 0
+        + {static} JUGADOR_VERDE: int = 1
+        + {static} JUGADOR_AZUL: int = 2
+        + {static} JUGADOR_AMARILLO: int = 3
+        + {static} NOMBRES_JUGADORES: String[]
+        + {static} COLORES_JUGADORES: Color[]
+        + {static} COLORES_SUAVES: Color[]
+        + {static} SALIDA_AMARILLO: int = 5
+        + {static} SALIDA_AZUL: int = 22
+        + {static} SALIDA_ROJO: int = 39
+        + {static} SALIDA_VERDE: int = 56
+        + {static} ENTRADA_AZUL: int = 17
+        + {static} ENTRADA_ROJO: int = 34
+        + {static} ENTRADA_VERDE: int = 51
+        + {static} ENTRADA_AMARILLO: int = 68
+        + {static} SEGUROS: int[]
+        - casillasPista: Point2D.Double[69]
+        - casillasMeta: Point2D.Double[4][9]
+        - nidosBases: Point2D.Double[4][4]
+        - todasLasFichas: List<Ficha>
+        - jugadorActivo: boolean[4]
+        - turnoActual: int
+        - valorDado: int
+        - esperandoMovimiento: boolean
+        - animacionEnProgreso: boolean
+        - listener: TableroListener
+        - fichaHover: Ficha
+        - pulseAlpha: float
+        - pulseGrowing: boolean
+        - pulseTimer: Timer
+        + TableroPanel()
+        + setTableroListener(listener: TableroListener): void
+        - calcularGeometria(): void
+        - inicializarFichas(): void
+        - iniciarTimerPulso(): void
+        + configurarPartida(numJugadores: int, colorHumano: String): void
+        + setTurno(turno: int, dado: int): void
+        + isAnimacionEnProgreso(): boolean
+        + getFichasEnBase(jugador: int): int
+        + getFichasCoronadas(jugador: int): int
+        + getFichasMovibles(jugador: int, dado: int): List<Ficha>
+        - getPosicionFicha(f: Ficha): Point2D.Double
+        - manejarHover(mx: int, my: int): void
+        - manejarClick(mx: int, my: int): void
+        + ejecutarMovimientoConHilo(ficha: Ficha, pasos: int): void
+        - getCoordenadaPorPasos(jugador: int, pasos: int): Point2D.Double
+        - verificarCaptura(fichaMovida: Ficha): void
+        - esSeguro(casilla: int): boolean
+        # paintComponent(g: Graphics): void
+        - dibujarBases(g2: Graphics2D): void
+        - dibujarBaseEsquina(g2: Graphics2D, x: int, y: int, bw: int, bh: int, colorBase: Color, texto: String): void
+        - dibujarPasillosYCentro(g2: Graphics2D): void
+        - dibujarPasilloVertical(g2: Graphics2D, x: double, y: double, w: double, h: double, c: Color, baja: boolean): void
+        - dibujarPasilloHorizontal(g2: Graphics2D, x: double, y: double, w: double, h: double, c: Color, vaDerecha: boolean): void
+        - dibujarCasillasPista(g2: Graphics2D): void
+        - dibujarRectanguloCasilla(g2: Graphics2D, i: int, rellenar: boolean): void
+        - dibujarNidosBases(g2: Graphics2D): void
+        - dibujarFichas(g2: Graphics2D): void
+        - dibujarFichaIndividual(g2: Graphics2D, f: Ficha, x: double, y: double, hover: boolean): void
+    }
+
+    class "TableroPanel.Ficha" as Ficha {
+        + jugador: int
+        + id: int
+        + enBase: boolean
+        + pasosRecorridos: int
+        + coronada: boolean
+        + animX: double
+        + animY: double
+        + animando: boolean
+        + Ficha(jugador: int, id: int)
+        + getCasillaActual(): int
+    }
+}
+
+Parchis ..> ParchisFames : lanza
+ParchisFames ..> SeleccionPanel : abre en JDialog
+ParchisFames ..> JuegoPanel : crea ventana de partida
+ParchisFames ..|> NavegacionListener : implementa
+SeleccionPanel o-- NavegacionListener : notifica
+
+JuegoPanel *-- TableroPanel : contiene
+JuegoPanel ..|> TableroListener : implementa
+TableroPanel o-- TableroListener : notifica
+TableroPanel *-- "16" Ficha : administra
+
+@enduml
