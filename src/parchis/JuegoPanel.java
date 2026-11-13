@@ -15,6 +15,9 @@ public class JuegoPanel extends javax.swing.JPanel {
      */
     public JuegoPanel() {
         initComponents();
+       
+
+
     }
 
     /**
@@ -39,6 +42,7 @@ public class JuegoPanel extends javax.swing.JPanel {
         lblEstadoAmarillo = new javax.swing.JLabel();
         lblMensaje = new javax.swing.JLabel();
         btnVolverMenu = new javax.swing.JButton();
+        jLayeredPane1 = new javax.swing.JLayeredPane();
 
         lblTablero.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Elementos/Tablero_Parchis.png"))); // NOI18N
 
@@ -79,6 +83,17 @@ public class JuegoPanel extends javax.swing.JPanel {
         btnVolverMenu.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         btnVolverMenu.setText("Volver al Menu");
 
+        javax.swing.GroupLayout jLayeredPane1Layout = new javax.swing.GroupLayout(jLayeredPane1);
+        jLayeredPane1.setLayout(jLayeredPane1Layout);
+        jLayeredPane1Layout.setHorizontalGroup(
+            jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+        jLayeredPane1Layout.setVerticalGroup(
+            jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -88,70 +103,79 @@ public class JuegoPanel extends javax.swing.JPanel {
                     .addComponent(lblTablero)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(108, 108, 108)
-                        .addComponent(lblMensaje)))
+                        .addComponent(lblMensaje))
+                    .addComponent(jLayeredPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblTituloTurno, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(lblNombreTurno, javax.swing.GroupLayout.Alignment.TRAILING)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(70, 70, 70)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(lblEstadoAzul)
-                                .addComponent(lblEstadoVerde))
-                            .addComponent(lblEstadoAmarillo)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(6, 6, 6)
-                                .addComponent(lblEstadoRojo)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(92, 92, 92)
-                                .addComponent(lblDADO))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(lblTituloTurno))
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(64, 64, 64)
+                                .addGap(70, 70, 70)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(btnLanzarDado)
-                                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lblTituloJugadores)
-                                    .addComponent(btnVolverMenu))))
-                        .addGap(0, 31, Short.MAX_VALUE)))
-                .addContainerGap(14, Short.MAX_VALUE))
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(lblEstadoAzul)
+                                        .addComponent(lblEstadoVerde))
+                                    .addComponent(lblEstadoAmarillo)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(6, 6, 6)
+                                        .addComponent(lblEstadoRojo)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(92, 92, 92)
+                                        .addComponent(lblDADO))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(64, 64, 64)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(btnLanzarDado)
+                                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(lblTituloJugadores)
+                                            .addComponent(btnVolverMenu))))
+                                .addGap(0, 31, Short.MAX_VALUE)))
+                        .addContainerGap(14, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(55, 55, 55)
+                        .addComponent(lblNombreTurno)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(29, 29, 29)
-                .addComponent(lblTituloTurno)
-                .addGap(36, 36, 36)
-                .addComponent(lblNombreTurno)
-                .addGap(30, 30, 30)
-                .addComponent(lblDADO)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnLanzarDado)
-                .addGap(26, 26, 26)
-                .addComponent(lblTituloJugadores)
-                .addGap(18, 18, 18)
-                .addComponent(lblEstadoRojo)
-                .addGap(18, 18, 18)
-                .addComponent(lblEstadoVerde)
-                .addGap(18, 18, 18)
-                .addComponent(lblEstadoAzul)
-                .addGap(18, 18, 18)
-                .addComponent(lblEstadoAmarillo)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnVolverMenu)
-                    .addComponent(lblMensaje))
-                .addContainerGap(38, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(lblTablero)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(29, 29, 29)
+                        .addComponent(lblTituloTurno)
+                        .addGap(40, 40, 40)
+                        .addComponent(lblNombreTurno)
+                        .addGap(26, 26, 26)
+                        .addComponent(lblDADO)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnLanzarDado)
+                        .addGap(26, 26, 26)
+                        .addComponent(lblTituloJugadores)
+                        .addGap(18, 18, 18)
+                        .addComponent(lblEstadoRojo)
+                        .addGap(18, 18, 18)
+                        .addComponent(lblEstadoVerde)
+                        .addGap(18, 18, 18)
+                        .addComponent(lblEstadoAzul)
+                        .addGap(18, 18, 18)
+                        .addComponent(lblEstadoAmarillo)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnVolverMenu)
+                            .addComponent(lblMensaje)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLayeredPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblTablero)))
+                .addContainerGap(11, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -164,6 +188,7 @@ public class JuegoPanel extends javax.swing.JPanel {
     private javax.swing.JButton btnLanzarDado;
     private javax.swing.JButton btnVolverMenu;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLayeredPane jLayeredPane1;
     private javax.swing.JLabel lblDADO;
     private javax.swing.JLabel lblEstadoAmarillo;
     private javax.swing.JLabel lblEstadoAzul;
