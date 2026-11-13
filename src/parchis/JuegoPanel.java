@@ -26,19 +26,153 @@ public class JuegoPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        lblTablero = new javax.swing.JLabel();
+        lblTituloTurno = new javax.swing.JLabel();
+        lblNombreTurno = new javax.swing.JLabel();
+        lblDADO = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        btnLanzarDado = new javax.swing.JButton();
+        lblTituloJugadores = new javax.swing.JLabel();
+        lblEstadoRojo = new javax.swing.JLabel();
+        lblEstadoVerde = new javax.swing.JLabel();
+        lblEstadoAzul = new javax.swing.JLabel();
+        lblEstadoAmarillo = new javax.swing.JLabel();
+        lblMensaje = new javax.swing.JLabel();
+        btnVolverMenu = new javax.swing.JButton();
+
+        lblTablero.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Elementos/Tablero_Parchis.png"))); // NOI18N
+
+        lblTituloTurno.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        lblTituloTurno.setText("TURNO ACTUAL");
+
+        lblNombreTurno.setFont(new java.awt.Font("Segoe UI", 0, 20)); // NOI18N
+        lblNombreTurno.setText("JUGADOR ROJO");
+
+        lblDADO.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        lblDADO.setText("DADO");
+
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Elementos/Dado_1.png"))); // NOI18N
+        jLabel1.setPreferredSize(new java.awt.Dimension(100, 100));
+
+        btnLanzarDado.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnLanzarDado.setText("Lanzar Dado");
+        btnLanzarDado.addActionListener(this::btnLanzarDadoActionPerformed);
+
+        lblTituloJugadores.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        lblTituloJugadores.setText("JUGADORES");
+
+        lblEstadoRojo.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lblEstadoRojo.setText("Rojo: 4 Fichas");
+
+        lblEstadoVerde.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lblEstadoVerde.setText("Verde: 4 Fichas");
+
+        lblEstadoAzul.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lblEstadoAzul.setText("Azul: 4 fichas");
+
+        lblEstadoAmarillo.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lblEstadoAmarillo.setText("Amarillo: 4 Fichas");
+
+        lblMensaje.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        lblMensaje.setText("Lanza el dado para comenzar");
+
+        btnVolverMenu.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        btnVolverMenu.setText("Volver al Menu");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblTablero)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(108, 108, 108)
+                        .addComponent(lblMensaje)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblTituloTurno, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(lblNombreTurno, javax.swing.GroupLayout.Alignment.TRAILING)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(70, 70, 70)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(lblEstadoAzul)
+                                .addComponent(lblEstadoVerde))
+                            .addComponent(lblEstadoAmarillo)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(6, 6, 6)
+                                .addComponent(lblEstadoRojo)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(92, 92, 92)
+                                .addComponent(lblDADO))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(64, 64, 64)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(btnLanzarDado)
+                                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lblTituloJugadores)
+                                    .addComponent(btnVolverMenu))))
+                        .addGap(0, 31, Short.MAX_VALUE)))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(29, 29, 29)
+                .addComponent(lblTituloTurno)
+                .addGap(36, 36, 36)
+                .addComponent(lblNombreTurno)
+                .addGap(30, 30, 30)
+                .addComponent(lblDADO)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnLanzarDado)
+                .addGap(26, 26, 26)
+                .addComponent(lblTituloJugadores)
+                .addGap(18, 18, 18)
+                .addComponent(lblEstadoRojo)
+                .addGap(18, 18, 18)
+                .addComponent(lblEstadoVerde)
+                .addGap(18, 18, 18)
+                .addComponent(lblEstadoAzul)
+                .addGap(18, 18, 18)
+                .addComponent(lblEstadoAmarillo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnVolverMenu)
+                    .addComponent(lblMensaje))
+                .addContainerGap(38, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(lblTablero)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnLanzarDadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLanzarDadoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnLanzarDadoActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnLanzarDado;
+    private javax.swing.JButton btnVolverMenu;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel lblDADO;
+    private javax.swing.JLabel lblEstadoAmarillo;
+    private javax.swing.JLabel lblEstadoAzul;
+    private javax.swing.JLabel lblEstadoRojo;
+    private javax.swing.JLabel lblEstadoVerde;
+    private javax.swing.JLabel lblMensaje;
+    private javax.swing.JLabel lblNombreTurno;
+    private javax.swing.JLabel lblTablero;
+    private javax.swing.JLabel lblTituloJugadores;
+    private javax.swing.JLabel lblTituloTurno;
     // End of variables declaration//GEN-END:variables
 }
