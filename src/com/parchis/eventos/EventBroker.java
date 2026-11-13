@@ -17,10 +17,23 @@ import java.util.Set;
 public class EventBroker {
 
     public static final int PUERTO_DEFAULT = 9999;
+    private static EventBroker instanciaGlobal;
     private final int puerto;
     private final Set<ClienteHandler> clientesConectados = Collections.synchronizedSet(new HashSet<>());
     private volatile boolean activo = false;
     private ServerSocket serverSocket;
+
+    public static synchronized EventBroker getInstanciaGlobal(int puerto) {
+        if (instanciaGlobal == null || !instanciaGlobal.isActivo()) {
+            instanciaGlobal = new EventBroker(puerto);
+            instanciaGlobal.iniciar();
+        }
+        return instanciaGlobal;
+    }
+
+    public boolean isActivo() {
+        return activo && serverSocket != null && !serverSocket.isClosed();
+    }
 
     public EventBroker() {
         this(PUERTO_DEFAULT);

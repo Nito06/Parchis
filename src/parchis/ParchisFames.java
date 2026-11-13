@@ -37,6 +37,7 @@ public class ParchisFames extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         LblDados = new javax.swing.JLabel();
         btnIniciar = new javax.swing.JButton();
+        btnIniciarRed = new javax.swing.JButton();
         btnSalir = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -56,16 +57,22 @@ public class ParchisFames extends javax.swing.JFrame {
         LblDados.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Elementos/Dados_260x200.png"))); // NOI18N
         getContentPane().add(LblDados, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 85, 260, 200));
 
-        btnIniciar.setFont(new java.awt.Font("Segoe UI", 0, 32)); // NOI18N
-        btnIniciar.setText("Iniciar Juego");
+        btnIniciar.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        btnIniciar.setText("Partida Local (Bots)");
         btnIniciar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnIniciar.addActionListener(this::btnIniciarActionPerformed);
-        getContentPane().add(btnIniciar, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 310, 320, 65));
+        getContentPane().add(btnIniciar, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 295, 320, 48));
+
+        btnIniciarRed.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        btnIniciarRed.setText("Partida en Red (Wi-Fi / VPN)");
+        btnIniciarRed.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnIniciarRed.addActionListener(this::btnIniciarRedActionPerformed);
+        getContentPane().add(btnIniciarRed, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 352, 320, 48));
 
         btnSalir.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnSalir.setText("SALIR");
         btnSalir.addActionListener(this::btnSalirActionPerformed);
-        getContentPane().add(btnSalir, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 405, 140, 40));
+        getContentPane().add(btnSalir, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 412, 140, 36));
 
         pack();
         setLocationRelativeTo(null);
@@ -110,10 +117,28 @@ public class ParchisFames extends javax.swing.JFrame {
         dialogoSeleccion.setLocationRelativeTo(this);
         dialogoSeleccion.setVisible(true);
 
-
     }//GEN-LAST:event_btnIniciarActionPerformed
 
-    private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
+    private void btnIniciarRedActionPerformed(java.awt.event.ActionEvent evt) {
+        DialogoModoRed dialogoRed = new DialogoModoRed(this, (miColor, miNombre, client, esHost, codigoSala, coloresActivos) -> {
+            dispose();
+
+            javax.swing.JFrame ventanaJuego = new javax.swing.JFrame("Parchís en Red [" + codigoSala + "] - " + miNombre + " (" + miColor + ")");
+            ventanaJuego.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
+            ventanaJuego.setResizable(false);
+
+            JuegoPanel panelJuego = new JuegoPanel();
+            panelJuego.inicializarJuegoEnRed(miColor, miNombre, client, esHost, codigoSala, coloresActivos);
+
+            ventanaJuego.add(panelJuego);
+            ventanaJuego.pack();
+            ventanaJuego.setLocationRelativeTo(null);
+            ventanaJuego.setVisible(true);
+        });
+        dialogoRed.setVisible(true);
+    }
+
+    private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {
         // Cerrar el programa
         System.exit(0);
     }//GEN-LAST:event_btnSalirActionPerformed
@@ -140,6 +165,7 @@ public class ParchisFames extends javax.swing.JFrame {
     private javax.swing.JLabel LblDados;
     private javax.swing.JLabel LblParchisTexto;
     private javax.swing.JButton btnIniciar;
+    private javax.swing.JButton btnIniciarRed;
     private javax.swing.JButton btnSalir;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;

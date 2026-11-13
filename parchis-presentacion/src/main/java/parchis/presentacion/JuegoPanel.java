@@ -1,5 +1,9 @@
 package parchis.presentacion;
 
+import com.parchis.dtos.EventoDTO;
+import com.parchis.dtos.MovimientoDTO;
+import com.parchis.dtos.TipoEvento;
+import com.parchis.eventos.EventClient;
 import java.awt.Color;
 import java.awt.Window;
 import java.util.List;
@@ -25,6 +29,14 @@ public class JuegoPanel extends javax.swing.JPanel {
     private int indiceHumano = 0;
     private final boolean[] jugadorActivo = new boolean[4]; // [0=Rojo, 1=Verde, 2=Azul, 3=Amarillo]
 
+    // Control de Partida en Red (Arquitectura Basada en Eventos)
+    private boolean modoEnRed = false;
+    private boolean esHost = false;
+    private String miNombre = "Jugador";
+    private String codigoSala = "SALA-01";
+    private EventClient eventClient;
+    private int miIndiceJugador = 0;
+
     public JuegoPanel() {
         initComponents();
         configurarTablero();
@@ -44,6 +56,20 @@ public class JuegoPanel extends javax.swing.JPanel {
             }
 
             @Override
+            public void onFichaMovidaLocal(int jugador, int idFicha, int pasos) {
+                if (modoEnRed && eventClient != null) {
+                    MovimientoDTO mov = new MovimientoDTO(jugador, idFicha, pasos);
+                    EventoDTO evento = new EventoDTO(
+                            TipoEvento.FICHA_MOVIDA,
+                            miNombre,
+                            codigoSala,
+                            mov
+                    );
+                    eventClient.publicarEvento(evento);
+                }
+            }
+
+            @Override
             public void onMensaje(String mensaje) {
                 lblMensaje.setText(mensaje);
             }
@@ -51,12 +77,30 @@ public class JuegoPanel extends javax.swing.JPanel {
             @Override
             public void onFichaComida(String jugadorComedor, String jugadorComido) {
                 lblMensaje.setText("¡" + jugadorComedor + " se comió una ficha de " + jugadorComido + "!");
+                if (modoEnRed && eventClient != null) {
+                    EventoDTO evento = new EventoDTO(
+                            TipoEvento.FICHA_COMIDA,
+                            miNombre,
+                            codigoSala,
+                            jugadorComedor + " comió una ficha de " + jugadorComido
+                    );
+                    eventClient.publicarEvento(evento);
+                }
             }
 
             @Override
             public void onVictoria(String jugadorGanador) {
                 lblMensaje.setText("¡¡VICTORIA!! " + jugadorGanador + " ha ganado la partida.");
                 btnLanzarDado.setEnabled(false);
+                if (modoEnRed && eventClient != null) {
+                    EventoDTO evento = new EventoDTO(
+                            TipoEvento.PARTIDA_FINALIZADA,
+                            miNombre,
+                            codigoSala,
+                            jugadorGanador
+                    );
+                    eventClient.publicarEvento(evento);
+                }
                 javax.swing.JOptionPane.showMessageDialog(JuegoPanel.this,
                         "¡Felicidades a " + jugadorGanador + "! Ha completado el recorrido con todas sus fichas.",
                         "Fin de la partida",
@@ -218,6 +262,17 @@ public class JuegoPanel extends javax.swing.JPanel {
             } catch (Exception ignored) {}
 
             yaLanzoDado = true;
+
+            if (modoEnRed && eventClient != null) {
+                EventoDTO evento = new EventoDTO(
+                        TipoEvento.DADO_LANZADO,
+                        miNombre,
+                        codigoSala,
+                        valorDado
+                );
+                eventClient.publicarEvento(evento);
+            }
+
             tableroPanel.setTurno(turnoActual, valorDado);
             ((Timer) evt.getSource()).stop();
         });
@@ -227,6 +282,9 @@ public class JuegoPanel extends javax.swing.JPanel {
     }
 
     private void btnVolverMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverMenuActionPerformed
+        if (modoEnRed && eventClient != null) {
+            eventClient.desconectar();
+        }
         Window ventanaActual = SwingUtilities.getWindowAncestor(this);
         if (ventanaActual != null) {
             ventanaActual.dispose();
@@ -253,12 +311,7 @@ public class JuegoPanel extends javax.swing.JPanel {
     private void configurarJugadoresActivos() {
         for (int i = 0; i < 4; i++) jugadorActivo[i] = false;
 
-        indiceHumano = 0;
-        if (colorHumano.equalsIgnoreCase("Rojo")) indiceHumano = 0;
-        else if (colorHumano.equalsIgnoreCase("Verde")) indiceHumano = 1;
-        else if (colorHumano.equalsIgnoreCase("Azul")) indiceHumano = 2;
-        else if (colorHumano.equalsIgnoreCase("Amarillo")) indiceHumano = 3;
-
+        indiceHumano = colorToIndice(colorHumano);
         jugadorActivo[indiceHumano] = true;
 
         if (numeroJugadoresTotales == 2) {
@@ -275,6 +328,7 @@ public class JuegoPanel extends javax.swing.JPanel {
     }
 
     public void inicializarJuego(int numJugadores, String colorElegido) {
+        this.modoEnRed = false;
         this.numeroJugadoresTotales = numJugadores;
         this.colorHumano = colorElegido;
 
@@ -282,6 +336,106 @@ public class JuegoPanel extends javax.swing.JPanel {
         turnoActual = indiceHumano;
 
         prepararTurno();
+    }
+
+    public void inicializarJuegoEnRed(String miColor, String nombreJugador, EventClient client, boolean esHost, String sala, List<String> coloresActivos) {
+        this.modoEnRed = true;
+        this.esHost = esHost;
+        this.miNombre = (nombreJugador != null && !nombreJugador.isBlank()) ? nombreJugador : (esHost ? "Host" : "Invitado");
+        this.codigoSala = (sala != null && !sala.isBlank()) ? sala : "SALA-01";
+        this.eventClient = client;
+        this.colorHumano = miColor;
+
+        for (int i = 0; i < 4; i++) jugadorActivo[i] = false;
+
+        if (coloresActivos != null && !coloresActivos.isEmpty()) {
+            this.numeroJugadoresTotales = coloresActivos.size();
+            for (String c : coloresActivos) {
+                int idx = colorToIndice(c);
+                if (idx >= 0 && idx < 4) jugadorActivo[idx] = true;
+            }
+        } else {
+            this.numeroJugadoresTotales = 2;
+            int idxHum = colorToIndice(miColor);
+            jugadorActivo[idxHum] = true;
+            jugadorActivo[(idxHum + 2) % 4] = true;
+        }
+
+        this.indiceHumano = colorToIndice(miColor);
+        this.miIndiceJugador = this.indiceHumano;
+
+        tableroPanel.configurarPartidaConJugadores(jugadorActivo);
+        actualizarEstadoFichas();
+
+        if (this.eventClient != null) {
+            this.eventClient.suscribir(this::procesarEventoRed);
+        }
+
+        // El primer turno es el del primer jugador activo (usualmente 0=Rojo)
+        turnoActual = 0;
+        while (!jugadorActivo[turnoActual]) {
+            turnoActual = (turnoActual + 1) % 4;
+        }
+
+        prepararTurno();
+    }
+
+    public void procesarEventoRed(EventoDTO evento) {
+        if (evento == null) return;
+        if (miNombre != null && miNombre.equals(evento.getEmisor())) {
+            return; // Ya procesado localmente
+        }
+
+        SwingUtilities.invokeLater(() -> {
+            switch (evento.getTipo()) {
+                case DADO_LANZADO -> {
+                    if (evento.getPayload() instanceof Integer dado) {
+                        this.valorDado = dado;
+                        try {
+                            String ruta = "/Elementos/Dado_" + dado + ".png";
+                            jLabel1.setIcon(new ImageIcon(getClass().getResource(ruta)));
+                        } catch (Exception ignored) {}
+
+                        lblMensaje.setText(evento.getEmisor() + " (" + TableroPanel.NOMBRES_JUGADORES[turnoActual] + ") sacó un " + dado + ".");
+
+                        List<TableroPanel.Ficha> movibles = tableroPanel.getFichasMovibles(turnoActual, dado);
+                        if (movibles.isEmpty()) {
+                            lblMensaje.setText(evento.getEmisor() + " sacó un " + dado + " pero no puede mover. Pasa el turno.");
+                            Timer t = new Timer(1200, e -> {
+                                ((Timer) e.getSource()).stop();
+                                cambiarTurno();
+                            });
+                            t.setRepeats(false);
+                            t.start();
+                        }
+                    }
+                }
+                case FICHA_MOVIDA -> {
+                    if (evento.getPayload() instanceof MovimientoDTO mov) {
+                        lblMensaje.setText(evento.getEmisor() + " movió su ficha " + (mov.getIdFicha() + 1) + " (" + mov.getPasos() + " casillas).");
+                        tableroPanel.moverFichaRemota(mov.getJugador(), mov.getIdFicha(), mov.getPasos());
+                    }
+                }
+                case FICHA_COMIDA -> {
+                    lblMensaje.setText("¡" + evento.getPayload() + "!");
+                }
+                case PARTIDA_FINALIZADA -> {
+                    lblMensaje.setText("¡Partida finalizada! Ganador: " + evento.getPayload());
+                    btnLanzarDado.setEnabled(false);
+                }
+                default -> {}
+            }
+        });
+    }
+
+    public static int colorToIndice(String color) {
+        if (color == null) return 0;
+        return switch (color.toLowerCase().trim()) {
+            case "verde" -> 1;
+            case "azul" -> 2;
+            case "amarillo" -> 3;
+            default -> 0; // rojo
+        };
     }
 
     private void actualizarEstadoFichas() {
@@ -319,15 +473,25 @@ public class JuegoPanel extends javax.swing.JPanel {
             }
         }
 
-        if (turnoActual == indiceHumano) {
-            // Turno del jugador humano
-            btnLanzarDado.setEnabled(true);
-            lblMensaje.setText("¡Es tu turno! Lanza el dado.");
+        if (modoEnRed) {
+            if (turnoActual == miIndiceJugador) {
+                btnLanzarDado.setEnabled(true);
+                lblMensaje.setText("¡Es tu turno en la red (" + colorHumano + ")! Lanza el dado.");
+            } else {
+                btnLanzarDado.setEnabled(false);
+                lblMensaje.setText("Esperando jugada de " + TableroPanel.NOMBRES_JUGADORES[turnoActual] + "...");
+            }
         } else {
-            // Turno de bot / rival automático
-            btnLanzarDado.setEnabled(false);
-            lblMensaje.setText("Turno de la computadora (" + TableroPanel.NOMBRES_JUGADORES[turnoActual] + ")...");
-            ejecutarTurnoBot();
+            if (turnoActual == indiceHumano) {
+                // Turno del jugador humano
+                btnLanzarDado.setEnabled(true);
+                lblMensaje.setText("¡Es tu turno! Lanza el dado.");
+            } else {
+                // Turno de bot / rival automático
+                btnLanzarDado.setEnabled(false);
+                lblMensaje.setText("Turno de la computadora (" + TableroPanel.NOMBRES_JUGADORES[turnoActual] + ")...");
+                ejecutarTurnoBot();
+            }
         }
     }
 

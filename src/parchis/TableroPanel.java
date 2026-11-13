@@ -22,6 +22,7 @@ public class TableroPanel extends JPanel {
         void onMensaje(String mensaje);
         void onFichaComida(String jugadorComedor, String jugadorComido);
         void onVictoria(String jugadorGanador);
+        default void onFichaMovidaLocal(int jugador, int idFicha, int pasos) {}
     }
 
     public static final int JUGADOR_ROJO = 0;
@@ -309,6 +310,14 @@ public class TableroPanel extends JPanel {
         repaint();
     }
 
+    public void configurarPartidaConJugadores(boolean[] activos) {
+        for (int i = 0; i < 4; i++) {
+            jugadorActivo[i] = activos != null && i < activos.length && activos[i];
+        }
+        inicializarFichas();
+        repaint();
+    }
+
     public void setTurno(int turno, int dado) {
         this.turnoActual = turno;
         this.valorDado = dado;
@@ -430,9 +439,30 @@ public class TableroPanel extends JPanel {
         for (Ficha f : movibles) {
             Point2D.Double pt = getPosicionFicha(f);
             if (pt.distance(mx, my) <= 18) {
+                if (listener != null) {
+                    listener.onFichaMovidaLocal(f.jugador, f.id, valorDado);
+                }
                 ejecutarMovimientoConHilo(f, valorDado);
                 break;
             }
+        }
+    }
+
+    public Ficha getFicha(int jugador, int id) {
+        for (Ficha f : todasLasFichas) {
+            if (f.jugador == jugador && f.id == id) {
+                return f;
+            }
+        }
+        return null;
+    }
+
+    public void moverFichaRemota(int jugador, int idFicha, int pasos) {
+        Ficha f = getFicha(jugador, idFicha);
+        if (f != null) {
+            this.valorDado = pasos;
+            this.turnoActual = jugador;
+            ejecutarMovimientoConHilo(f, pasos);
         }
     }
 
