@@ -227,20 +227,22 @@ private void aceptarSeleccion() {
     }
 
     // Enviar los datos a la siguiente pantalla
-    if (listener != null) {
+    final int finalNum = numeroJugadores;
+    final String finalColor = color;
+    ControlSala controlSala = new ControlSala();
+    controlSala.crearSala("Jugador 1", finalColor, finalNum, new ControlSala.VistaSalaCallback() {
+        @Override
+        public void onOperacionExitosa(com.parchis.dtos.SalaDTO sala, com.parchis.dtos.JugadorDTO jugadorActual) {
+            if (listener != null) {
+                listener.iniciarPartida(finalNum, finalColor);
+            }
+        }
 
-        listener.iniciarPartida(numeroJugadores, color);
-
-    } else {
-
-        javax.swing.JOptionPane.showMessageDialog(
-            this,
-            "¡Configuracion realizada correctamente!\n\n"
-            + "Color: " + color + "\n"
-            + "Jugadores: " + numeroJugadores
-            + "\n\nLa pantalla de juego aun no esta conectada."
-        );
-    }
+        @Override
+        public void onErrorNegocio(String mensajeError) {
+            javax.swing.JOptionPane.showMessageDialog(SeleccionPanel.this, mensajeError, "Aviso de Sala (Flujo Alterno)", javax.swing.JOptionPane.WARNING_MESSAGE);
+        }
+    });
 }
 
 
