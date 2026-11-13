@@ -41,6 +41,7 @@ public class ParchisFames extends javax.swing.JFrame {
         btnSalir = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setPreferredSize(new java.awt.Dimension(700, 500));
         setResizable(false);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -141,7 +142,7 @@ public class ParchisFames extends javax.swing.JFrame {
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {
         // Cerrar el programa
         System.exit(0);
-    }//GEN-LAST:event_btnSalirActionPerformed
+    }                                        
 
     public static void main(String args[]) {
 
