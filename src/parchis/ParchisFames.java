@@ -66,15 +66,49 @@ public class ParchisFames extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnIniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarActionPerformed
-        // Crear la pantalla de selección
-        SeleccionPanel panelSeleccion = new SeleccionPanel();
+      // Crear la pantalla de selección y conectar sus botones
+    SeleccionPanel panelSeleccion = new SeleccionPanel(
+        new SeleccionPanel.NavegacionListener() {
 
-        // Mostrar la nueva pantalla en la misma ventana
-        setContentPane(panelSeleccion);
+            @Override
+            public void iniciarPartida(int numeroJugadores, String color) {
 
-        // Actualizar la ventana
-        revalidate();
-        repaint();
+                // Abrir la pantalla del juego
+                JuegoPanel panelJuego = new JuegoPanel();
+
+                setContentPane(panelJuego);
+
+                setTitle("Parchís - Partida");
+
+                revalidate();
+                repaint();
+                pack();
+                setLocationRelativeTo(null);
+            }
+
+            @Override
+            public void volverAlMenu() {
+
+                // Regresar a la pantalla principal
+                ParchisFames nuevaVentana = new ParchisFames();
+
+                nuevaVentana.setVisible(true);
+
+                dispose();
+            }
+        }
+    );
+
+    // Mostrar la pantalla de selección
+    setContentPane(panelSeleccion);
+
+    setTitle("Parchís - Selección de jugadores");
+
+    revalidate();
+    repaint();
+    pack();
+    setLocationRelativeTo(null);
+
 
     }//GEN-LAST:event_btnIniciarActionPerformed
 
