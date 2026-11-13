@@ -17,6 +17,10 @@ public class ParchisFames extends javax.swing.JFrame {
      */
     public ParchisFames() {
         initComponents();
+        getContentPane().setPreferredSize(new java.awt.Dimension(700, 500));
+        pack();
+        setResizable(false);
+        setLocationRelativeTo(null);
     }
 
     /**
@@ -36,33 +40,35 @@ public class ParchisFames extends javax.swing.JFrame {
         btnSalir = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
-        LblParchisTexto.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
+        LblParchisTexto.setFont(new java.awt.Font("Segoe UI", 1, 38)); // NOI18N
         LblParchisTexto.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         LblParchisTexto.setText("PARCHÍS");
-        getContentPane().add(LblParchisTexto, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 30, -1, -1));
+        getContentPane().add(LblParchisTexto, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 25, 700, 50));
         getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 210, -1, -1));
 
         LblDados.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         LblDados.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Elementos/Dados_260x200.png"))); // NOI18N
-        getContentPane().add(LblDados, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 90, -1, 220));
+        getContentPane().add(LblDados, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 85, 260, 200));
 
-        btnIniciar.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
+        btnIniciar.setFont(new java.awt.Font("Segoe UI", 0, 32)); // NOI18N
         btnIniciar.setText("Iniciar Juego");
         btnIniciar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnIniciar.addActionListener(this::btnIniciarActionPerformed);
-        getContentPane().add(btnIniciar, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 310, -1, -1));
+        getContentPane().add(btnIniciar, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 310, 320, 65));
 
-        btnSalir.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnSalir.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btnSalir.setText("SALIR");
         btnSalir.addActionListener(this::btnSalirActionPerformed);
-        getContentPane().add(btnSalir, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 420, -1, -1));
+        getContentPane().add(btnSalir, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 405, 140, 40));
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnIniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarActionPerformed
