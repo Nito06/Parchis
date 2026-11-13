@@ -66,48 +66,43 @@ public class ParchisFames extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnIniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarActionPerformed
-      // Crear la pantalla de selección y conectar sus botones
-    SeleccionPanel panelSeleccion = new SeleccionPanel(
-        new SeleccionPanel.NavegacionListener() {
-
-            @Override
+    // 1. Creamos una ventanita emergente (JDialog) para tu panel de selección
+        javax.swing.JDialog dialogoSeleccion = new javax.swing.JDialog(this, "Selección de jugadores", true);
+        
+        // 2. Instanciamos tu panel y le damos las instrucciones de qué hacer en cada botón
+        SeleccionPanel panelSeleccion = new SeleccionPanel(new SeleccionPanel.NavegacionListener() {
+            
+          @Override
             public void iniciarPartida(int numeroJugadores, String color) {
-
-                // Abrir la pantalla del juego
+                dialogoSeleccion.dispose(); 
+                dispose(); 
+                
+                javax.swing.JFrame ventanaJuego = new javax.swing.JFrame("Parchís - Partida");
+                ventanaJuego.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
+                ventanaJuego.setResizable(false);
+                
                 JuegoPanel panelJuego = new JuegoPanel();
-
-                setContentPane(panelJuego);
-
-                setTitle("Parchís - Partida");
-
-                revalidate();
-                repaint();
-                pack();
-                setLocationRelativeTo(null);
+                
+                // ¡ESTA ES LA LÍNEA QUE EVITA QUE SE CONGELE EL JUEGO!
+                panelJuego.inicializarJuego(numeroJugadores, color); 
+                
+                ventanaJuego.add(panelJuego);
+                ventanaJuego.pack();
+                ventanaJuego.setLocationRelativeTo(null); 
+                ventanaJuego.setVisible(true);
             }
 
             @Override
             public void volverAlMenu() {
-
-                // Regresar a la pantalla principal
-                ParchisFames nuevaVentana = new ParchisFames();
-
-                nuevaVentana.setVisible(true);
-
-                dispose();
+                dialogoSeleccion.dispose(); // Solo cierra la ventanita y nos deja en el menú
             }
-        }
-    );
+        });
 
-    // Mostrar la pantalla de selección
-    setContentPane(panelSeleccion);
-
-    setTitle("Parchís - Selección de jugadores");
-
-    revalidate();
-    repaint();
-    pack();
-    setLocationRelativeTo(null);
+        // 3. Agregamos el panel a la ventanita y la mostramos
+        dialogoSeleccion.add(panelSeleccion);
+        dialogoSeleccion.pack();
+        dialogoSeleccion.setLocationRelativeTo(this);
+        dialogoSeleccion.setVisible(true);
 
 
     }//GEN-LAST:event_btnIniciarActionPerformed

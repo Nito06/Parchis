@@ -9,15 +9,36 @@ package parchis;
  * @author Nito
  */
 public class JuegoPanel extends javax.swing.JPanel {
+// Declaración de las 16 fichas
+    private javax.swing.JLabel lblFichaRoja1, lblFichaRoja2, lblFichaRoja3, lblFichaRoja4;
+    private javax.swing.JLabel lblFichaVerde1, lblFichaVerde2, lblFichaVerde3, lblFichaVerde4;
+    private javax.swing.JLabel lblFichaAzul1, lblFichaAzul2, lblFichaAzul3, lblFichaAzul4;
+    private javax.swing.JLabel lblFichaAmarilla1, lblFichaAmarilla2, lblFichaAmarilla3, lblFichaAmarilla4;
+    
+    // Control del Juego
+    private int turnoActual = 0;
+    private int valorDado = 0;
+    private boolean yaLanzoDado = false;
+    
+    private int fichasRojasEnBase = 4;
+    private int fichasVerdesEnBase = 4;
+    private int fichasAzulesEnBase = 4;
+    private int fichasAmarillasEnBase = 4;
 
-    /**
-     * Creates new form JuegoPanel
-     */
-    public JuegoPanel() {
+    // Control de Jugadores Activos
+    private int numeroJugadoresTotales;
+    private String colorHumano;
+    private boolean[] jugadorActivo = new boolean[4]; // [0=Rojo, 1=Verde, 2=Azul, 3=Amarillo]
+    
+   public JuegoPanel() {
         initComponents();
-       
-
-
+        cargarFichas();
+        
+        // SALVAVIDAS: Si se abre el tablero directamente sin pasar por el menú, 
+        // evita que se congele asumiendo una partida de 4 jugadores empezando por el Rojo.
+        if (colorHumano == null) {
+            inicializarJuego(4, "Rojo");
+        }
     }
 
     /**
@@ -42,7 +63,6 @@ public class JuegoPanel extends javax.swing.JPanel {
         lblEstadoAmarillo = new javax.swing.JLabel();
         lblMensaje = new javax.swing.JLabel();
         btnVolverMenu = new javax.swing.JButton();
-        jLayeredPane1 = new javax.swing.JLayeredPane();
 
         lblTablero.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Elementos/Tablero_Parchis.png"))); // NOI18N
 
@@ -56,7 +76,6 @@ public class JuegoPanel extends javax.swing.JPanel {
         lblDADO.setText("DADO");
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Elementos/Dado_1.png"))); // NOI18N
-        jLabel1.setPreferredSize(new java.awt.Dimension(100, 100));
 
         btnLanzarDado.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnLanzarDado.setText("Lanzar Dado");
@@ -82,17 +101,7 @@ public class JuegoPanel extends javax.swing.JPanel {
 
         btnVolverMenu.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         btnVolverMenu.setText("Volver al Menu");
-
-        javax.swing.GroupLayout jLayeredPane1Layout = new javax.swing.GroupLayout(jLayeredPane1);
-        jLayeredPane1.setLayout(jLayeredPane1Layout);
-        jLayeredPane1Layout.setHorizontalGroup(
-            jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
-        jLayeredPane1Layout.setVerticalGroup(
-            jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
+        btnVolverMenu.addActionListener(this::btnVolverMenuActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -103,8 +112,7 @@ public class JuegoPanel extends javax.swing.JPanel {
                     .addComponent(lblTablero)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(108, 108, 108)
-                        .addComponent(lblMensaje))
-                    .addComponent(jLayeredPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(lblMensaje)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -120,8 +128,7 @@ public class JuegoPanel extends javax.swing.JPanel {
                                     .addComponent(lblEstadoAmarillo)
                                     .addGroup(layout.createSequentialGroup()
                                         .addGap(6, 6, 6)
-                                        .addComponent(lblEstadoRojo)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addComponent(lblEstadoRojo))))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
@@ -131,7 +138,7 @@ public class JuegoPanel extends javax.swing.JPanel {
                                         .addGap(64, 64, 64)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(btnLanzarDado)
-                                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel1)
                                             .addComponent(lblTituloJugadores)
                                             .addComponent(btnVolverMenu))))
                                 .addGap(0, 31, Short.MAX_VALUE)))
@@ -146,14 +153,14 @@ public class JuegoPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(29, 29, 29)
+                        .addGap(35, 35, 35)
                         .addComponent(lblTituloTurno)
                         .addGap(40, 40, 40)
                         .addComponent(lblNombreTurno)
                         .addGap(26, 26, 26)
                         .addComponent(lblDADO)
                         .addGap(18, 18, 18)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel1)
                         .addGap(18, 18, 18)
                         .addComponent(btnLanzarDado)
                         .addGap(26, 26, 26)
@@ -163,32 +170,58 @@ public class JuegoPanel extends javax.swing.JPanel {
                         .addGap(18, 18, 18)
                         .addComponent(lblEstadoVerde)
                         .addGap(18, 18, 18)
-                        .addComponent(lblEstadoAzul)
-                        .addGap(18, 18, 18)
-                        .addComponent(lblEstadoAmarillo)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnVolverMenu)
-                            .addComponent(lblMensaje)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLayeredPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblTablero)))
-                .addContainerGap(11, Short.MAX_VALUE))
+                        .addComponent(lblEstadoAzul))
+                    .addComponent(lblTablero))
+                .addGap(18, 18, 18)
+                .addComponent(lblEstadoAmarillo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnVolverMenu)
+                    .addComponent(lblMensaje))
+                .addContainerGap(32, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnLanzarDadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLanzarDadoActionPerformed
-        // TODO add your handling code here:
+    btnLanzarDado.setEnabled(false);
+        lblMensaje.setText("Lanzando dado...");
+
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Elementos/Girando_Dado.png")));
+
+        javax.swing.Timer timer = new javax.swing.Timer(500, new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                
+                valorDado = (int)(Math.random() * 6) + 1; 
+                
+                String ruta = "/Elementos/Dado_" + valorDado + ".png";
+                jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource(ruta)));
+                
+                lblMensaje.setText("¡Salió un " + valorDado + "! Mueve tu ficha.");
+                yaLanzoDado = true; 
+                
+                ((javax.swing.Timer)evt.getSource()).stop();
+            }
+        });
+        
+        timer.setRepeats(false);
+        timer.start();
+        
     }//GEN-LAST:event_btnLanzarDadoActionPerformed
+
+    private void btnVolverMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverMenuActionPerformed
+  java.awt.Window ventanaActual = javax.swing.SwingUtilities.getWindowAncestor(this);
+        if (ventanaActual != null) {
+            ventanaActual.dispose();
+        }
+        
+        new ParchisFames().setVisible(true);
+    }//GEN-LAST:event_btnVolverMenuActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnLanzarDado;
     private javax.swing.JButton btnVolverMenu;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLayeredPane jLayeredPane1;
     private javax.swing.JLabel lblDADO;
     private javax.swing.JLabel lblEstadoAmarillo;
     private javax.swing.JLabel lblEstadoAzul;
@@ -200,4 +233,157 @@ public class JuegoPanel extends javax.swing.JPanel {
     private javax.swing.JLabel lblTituloJugadores;
     private javax.swing.JLabel lblTituloTurno;
     // End of variables declaration//GEN-END:variables
+
+   private void configurarJugadoresActivos() {
+        jugadorActivo[0] = false; jugadorActivo[1] = false; 
+        jugadorActivo[2] = false; jugadorActivo[3] = false;
+
+        int miIndice = 0;
+        if (colorHumano.equals("Rojo")) miIndice = 0;
+        if (colorHumano.equals("Verde")) miIndice = 1;
+        if (colorHumano.equals("Azul")) miIndice = 2;
+        if (colorHumano.equals("Amarillo")) miIndice = 3;
+
+        jugadorActivo[miIndice] = true; 
+
+        if (numeroJugadoresTotales == 2) {
+            jugadorActivo[(miIndice + 2) % 4] = true; 
+        } else if (numeroJugadoresTotales == 3) {
+            jugadorActivo[(miIndice + 1) % 4] = true; 
+            jugadorActivo[(miIndice + 2) % 4] = true;
+        } else if (numeroJugadoresTotales == 4) {
+            jugadorActivo[0] = true; jugadorActivo[1] = true; 
+            jugadorActivo[2] = true; jugadorActivo[3] = true;
+        }
+    }
+
+    public void inicializarJuego(int numJugadores, String colorElegido) {
+        this.numeroJugadoresTotales = numJugadores;
+        this.colorHumano = colorElegido;
+        
+        configurarJugadoresActivos();
+        
+        if(colorElegido.equals("Rojo")) turnoActual = 0;
+        if(colorElegido.equals("Verde")) turnoActual = 1;
+        if(colorElegido.equals("Azul")) turnoActual = 2;
+        if(colorElegido.equals("Amarillo")) turnoActual = 3;
+        
+        prepararTurno();
+    }
+    
+    private javax.swing.JLabel crearFicha(java.awt.Color color, int x, int y) {
+        javax.swing.JLabel ficha = new javax.swing.JLabel();
+        ficha.setOpaque(true);
+        ficha.setBackground(color);
+        ficha.setBorder(javax.swing.BorderFactory.createLineBorder(java.awt.Color.BLACK, 2));
+        ficha.setBounds(x, y, 25, 25);
+        lblTablero.add(ficha);
+        return ficha;
+    }
+
+    private void cargarFichas() {
+        lblTablero.setLayout(null);
+
+        lblFichaRoja1 = crearFicha(java.awt.Color.RED, 60, 60);
+        lblFichaRoja2 = crearFicha(java.awt.Color.RED, 120, 60);
+        lblFichaRoja3 = crearFicha(java.awt.Color.RED, 60, 120);
+        lblFichaRoja4 = crearFicha(java.awt.Color.RED, 120, 120);
+
+        lblFichaVerde1 = crearFicha(java.awt.Color.GREEN, 360, 60);
+        lblFichaVerde2 = crearFicha(java.awt.Color.GREEN, 420, 60);
+        lblFichaVerde3 = crearFicha(java.awt.Color.GREEN, 360, 120);
+        lblFichaVerde4 = crearFicha(java.awt.Color.GREEN, 420, 120);
+
+        lblFichaAzul1 = crearFicha(java.awt.Color.BLUE, 60, 360);
+        lblFichaAzul2 = crearFicha(java.awt.Color.BLUE, 120, 360);
+        lblFichaAzul3 = crearFicha(java.awt.Color.BLUE, 60, 420);
+        lblFichaAzul4 = crearFicha(java.awt.Color.BLUE, 120, 420);
+
+        lblFichaAmarilla1 = crearFicha(java.awt.Color.YELLOW, 360, 360);
+        lblFichaAmarilla2 = crearFicha(java.awt.Color.YELLOW, 420, 360);
+        lblFichaAmarilla3 = crearFicha(java.awt.Color.YELLOW, 360, 420);
+        lblFichaAmarilla4 = crearFicha(java.awt.Color.YELLOW, 420, 420);
+
+        lblTablero.repaint();
+        
+        lblFichaRoja1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                if (turnoActual == 0 && yaLanzoDado == true) {
+                    lblFichaRoja1.setLocation(45, 205); 
+                    fichasRojasEnBase--;
+                    lblEstadoRojo.setText("Rojo: " + fichasRojasEnBase + " Fichas");
+                    cambiarTurno(); 
+                }
+            }
+        });
+        
+        lblFichaVerde1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                if (turnoActual == 1 && yaLanzoDado == true) {
+                    lblFichaVerde1.setLocation(270, 45);
+                    fichasVerdesEnBase--;
+                    lblEstadoVerde.setText("Verde: " + fichasVerdesEnBase + " Fichas");
+                    cambiarTurno(); 
+                }
+            }
+        });
+
+        lblFichaAzul1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                if (turnoActual == 2 && yaLanzoDado == true) {
+                    lblFichaAzul1.setLocation(205, 435); 
+                    fichasAzulesEnBase--;
+                    lblEstadoAzul.setText("Azul: " + fichasAzulesEnBase + " Fichas");
+                    cambiarTurno(); 
+                }
+            }
+        });
+
+        lblFichaAmarilla1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                if (turnoActual == 3 && yaLanzoDado == true) {
+                    lblFichaAmarilla1.setLocation(435, 270);
+                    fichasAmarillasEnBase--;
+                    lblEstadoAmarillo.setText("Amarillo: " + fichasAmarillasEnBase + " Fichas");
+                    cambiarTurno(); 
+                }
+            }
+        });
+    }
+    
+    private void prepararTurno() {
+        yaLanzoDado = false;
+        btnLanzarDado.setEnabled(true);
+
+        switch (turnoActual) {
+            case 0:
+                lblNombreTurno.setText("JUGADOR ROJO");
+                lblNombreTurno.setForeground(java.awt.Color.RED);
+                break;
+            case 1:
+                lblNombreTurno.setText("JUGADOR VERDE");
+                lblNombreTurno.setForeground(new java.awt.Color(0, 153, 0)); 
+                break;
+            case 2:
+                lblNombreTurno.setText("JUGADOR AZUL");
+                lblNombreTurno.setForeground(java.awt.Color.BLUE);
+                break;
+            case 3:
+                lblNombreTurno.setText("JUGADOR AMARILLO");
+                lblNombreTurno.setForeground(new java.awt.Color(204, 153, 0)); 
+                break;
+        }
+        lblMensaje.setText("¡Es turno del " + lblNombreTurno.getText() + "! Lanza el dado.");
+    }
+
+    private void cambiarTurno() {
+        do {
+            turnoActual++;
+            if (turnoActual > 3) {
+                turnoActual = 0;
+            }
+        } while (jugadorActivo[turnoActual] == false); 
+        
+        prepararTurno();
+    }
 }
