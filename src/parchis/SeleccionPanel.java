@@ -26,19 +26,145 @@ public class SeleccionPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        lblTitulo = new javax.swing.JLabel();
+        rbRojo = new javax.swing.JRadioButton();
+        rbVerde = new javax.swing.JRadioButton();
+        rbAzul = new javax.swing.JRadioButton();
+        rbAmarillo = new javax.swing.JRadioButton();
+        lblJugadores = new javax.swing.JLabel();
+        rbDos = new javax.swing.JRadioButton();
+        rbTres = new javax.swing.JRadioButton();
+        rbCuatro = new javax.swing.JRadioButton();
+        btnAceptar = new javax.swing.JButton();
+        btnVolver = new javax.swing.JButton();
+
+        lblTitulo.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
+        lblTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblTitulo.setText("Selecciona tu color");
+
+        rbRojo.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        rbRojo.setForeground(new java.awt.Color(255, 0, 0));
+        rbRojo.setText("Rojo");
+        rbRojo.addActionListener(this::rbRojoActionPerformed);
+
+        rbVerde.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        rbVerde.setForeground(new java.awt.Color(0, 150, 0));
+        rbVerde.setText("Verde");
+
+        rbAzul.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        rbAzul.setForeground(new java.awt.Color(0, 0, 255));
+        rbAzul.setText("Azul");
+
+        rbAmarillo.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        rbAmarillo.setForeground(new java.awt.Color(200, 160, 0));
+        rbAmarillo.setText("Amarillo");
+
+        lblJugadores.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        lblJugadores.setText("Numeros de Jugadores");
+
+        rbDos.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        rbDos.setText("2");
+
+        rbTres.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        rbTres.setText("3");
+
+        rbCuatro.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        rbCuatro.setText("4");
+
+        btnAceptar.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        btnAceptar.setText("Aceptar");
+
+        btnVolver.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        btnVolver.setText("Volver");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(84, 84, 84)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(rbDos)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(rbRojo)
+                        .addComponent(rbVerde)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(53, 53, 53)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(rbAmarillo)
+                            .addComponent(rbAzul)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(68, 68, 68)
+                        .addComponent(rbTres)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(25, 25, 25)
+                        .addComponent(btnVolver)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(rbCuatro)
+                            .addComponent(btnAceptar)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lblJugadores)
+                        .addGap(58, 58, 58)))
+                .addGap(29, 29, 29))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(64, Short.MAX_VALUE)
+                .addComponent(lblTitulo)
+                .addGap(47, 47, 47))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(15, 15, 15)
+                .addComponent(lblTitulo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(rbRojo)
+                        .addGap(8, 8, 8))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(8, 8, 8)
+                        .addComponent(rbAzul)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(rbVerde)
+                    .addComponent(rbAmarillo))
+                .addGap(18, 18, 18)
+                .addComponent(lblJugadores)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(rbDos)
+                    .addComponent(rbTres)
+                    .addComponent(rbCuatro))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnVolver)
+                    .addComponent(btnAceptar))
+                .addGap(21, 21, 21))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void rbRojoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbRojoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_rbRojoActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAceptar;
+    private javax.swing.JButton btnVolver;
+    private javax.swing.JLabel lblJugadores;
+    private javax.swing.JLabel lblTitulo;
+    private javax.swing.JRadioButton rbAmarillo;
+    private javax.swing.JRadioButton rbAzul;
+    private javax.swing.JRadioButton rbCuatro;
+    private javax.swing.JRadioButton rbDos;
+    private javax.swing.JRadioButton rbRojo;
+    private javax.swing.JRadioButton rbTres;
+    private javax.swing.JRadioButton rbVerde;
     // End of variables declaration//GEN-END:variables
 }

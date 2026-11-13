@@ -32,6 +32,8 @@ public class ParchisFames extends javax.swing.JFrame {
         LblParchisTexto = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         LblDados = new javax.swing.JLabel();
+        btnIniciar = new javax.swing.JButton();
+        btnSalir = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -40,7 +42,8 @@ public class ParchisFames extends javax.swing.JFrame {
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
 
         LblParchisTexto.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
-        LblParchisTexto.setText("PARCHIS!");
+        LblParchisTexto.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        LblParchisTexto.setText("PARCHÍS");
         getContentPane().add(LblParchisTexto, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 30, -1, -1));
         getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 210, -1, -1));
 
@@ -48,8 +51,27 @@ public class ParchisFames extends javax.swing.JFrame {
         LblDados.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Elementos/Dados_260x200.png"))); // NOI18N
         getContentPane().add(LblDados, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 80, -1, 220));
 
+        btnIniciar.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
+        btnIniciar.setText("Iniciar Juego");
+        btnIniciar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnIniciar.addActionListener(this::btnIniciarActionPerformed);
+        getContentPane().add(btnIniciar, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 310, -1, -1));
+
+        btnSalir.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnSalir.setText("SALIR");
+        btnSalir.addActionListener(this::btnSalirActionPerformed);
+        getContentPane().add(btnSalir, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 420, -1, -1));
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnIniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnIniciarActionPerformed
+
+    private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnSalirActionPerformed
 
     /**
      * @param args the command line arguments
@@ -79,6 +101,8 @@ public class ParchisFames extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel LblDados;
     private javax.swing.JLabel LblParchisTexto;
+    private javax.swing.JButton btnIniciar;
+    private javax.swing.JButton btnSalir;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
