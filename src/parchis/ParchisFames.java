@@ -9,7 +9,7 @@ package parchis;
  * @author Nito
  */
 public class ParchisFames extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ParchisFames.class.getName());
 
     /**
@@ -49,7 +49,7 @@ public class ParchisFames extends javax.swing.JFrame {
 
         LblDados.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         LblDados.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Elementos/Dados_260x200.png"))); // NOI18N
-        getContentPane().add(LblDados, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 80, -1, 220));
+        getContentPane().add(LblDados, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 90, -1, 220));
 
         btnIniciar.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
         btnIniciar.setText("Iniciar Juego");
@@ -60,28 +60,31 @@ public class ParchisFames extends javax.swing.JFrame {
         btnSalir.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnSalir.setText("SALIR");
         btnSalir.addActionListener(this::btnSalirActionPerformed);
-        getContentPane().add(btnSalir, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 420, -1, -1));
+        getContentPane().add(btnSalir, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 420, -1, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnIniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarActionPerformed
-        // TODO add your handling code here:
+        // Crear la pantalla de selección
+        SeleccionPanel panelSeleccion = new SeleccionPanel();
+
+        // Mostrar la nueva pantalla en la misma ventana
+        setContentPane(panelSeleccion);
+
+        // Actualizar la ventana
+        revalidate();
+        repaint();
+
     }//GEN-LAST:event_btnIniciarActionPerformed
 
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
-        // TODO add your handling code here:
+        // Cerrar el programa
+        System.exit(0);
     }//GEN-LAST:event_btnSalirActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
+
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
