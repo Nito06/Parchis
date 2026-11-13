@@ -1,0 +1,76 @@
+@startuml DiagramaComponentes
+skinparam componentStyle uml2
+skinparam roundcorner 10
+skinparam shadowing true
+skinparam defaultFontName "Segoe UI"
+skinparam component {
+    BackgroundColor #FFFFFF
+    BorderColor #2C3E50
+    ArrowColor #2C3E50
+}
+skinparam interface {
+    BackgroundColor #FFFFFF
+    BorderColor #2C3E50
+}
+
+title Vista de Componentes - Parchís en Red (Estilo Basado en Eventos)
+
+package "Capa de Presentación" {
+    [parchis-presentacion] as CompPresentacion <<módulo>>
+}
+
+package "Capa de Servicios y Negocio" {
+    [parchis-subsistema-sala] as CompSala <<módulo>>
+}
+
+package "Capa de Contratos e Interfaces" {
+    [parchis-interfaces] as CompInterfaces <<módulo>>
+}
+
+package "Capa de Comunicación Distribuida (Estilo)" {
+    [parchis-eventos] as CompEventos <<módulo>>
+}
+
+package "Capa de Persistencia (Hito 2B)" {
+    [parchis-persistencia] as CompPersistencia <<módulo>>
+}
+
+() "IFachadaSala" as IFachada
+() "ISalaListener" as IListener
+() "IEventPublisher" as IPublisher
+() "IEventSubscriber" as ISubscriber
+() "IPerfilDAO" as IDAO
+
+' Relaciones de provisión
+CompSala -up- IFachada
+CompInterfaces -up- IListener
+CompEventos -up- IPublisher
+CompEventos -up- ISubscriber
+CompPersistencia -up- IDAO
+
+' Relaciones de uso (dependencias)
+CompPresentacion ..> IFachada : <<use>> (vía ControlSala)
+CompPresentacion ..> IListener : <<implementa>>
+CompPresentacion ..> CompInterfaces : DTOs (JugadorDTO, SalaDTO)
+
+CompSala ..> CompInterfaces : implementa IFachada
+CompSala ..> IPublisher : publica eventos de sala
+CompSala ..> IDAO : usa para persistir perfiles (Hito 2B)
+
+CompEventos ..> CompInterfaces : transmite EventoDTO
+CompPersistencia ..> CompInterfaces : usa DTOs de perfil
+
+note right of CompEventos
+  Estilo Arquitectónico: Basado en Eventos
+  - EventBroker (Mediador de eventos en red)
+  - EventClient (Sockets distribuido)
+end note
+
+note left of CompSala
+  Subsistema de Sala:
+  - FabricaSala (Desacopla vistas)
+  - FachadaSalaMock (Hito 2A)
+  - FachadaSala (Hito 2B)
+end note
+
+@enduml
