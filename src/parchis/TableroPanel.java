@@ -101,6 +101,7 @@ public class TableroPanel extends JPanel {
     private int valorDado = 0;
     private boolean esperandoMovimiento = false;
     private boolean animacionEnProgreso = false;
+    private boolean partidaFinalizada = false;
 
     private TableroListener listener;
     private Ficha fichaHover = null;
@@ -287,6 +288,7 @@ public class TableroPanel extends JPanel {
     }
 
     public void configurarPartida(int numJugadores, String colorHumano) {
+        this.partidaFinalizada = false;
         for (int i = 0; i < 4; i++) jugadorActivo[i] = false;
 
         int indiceHumano = 0;
@@ -311,6 +313,7 @@ public class TableroPanel extends JPanel {
     }
 
     public void configurarPartidaConJugadores(boolean[] activos) {
+        this.partidaFinalizada = false;
         for (int i = 0; i < 4; i++) {
             jugadorActivo[i] = activos != null && i < activos.length && activos[i];
         }
@@ -319,6 +322,7 @@ public class TableroPanel extends JPanel {
     }
 
     public void setTurno(int turno, int dado) {
+        if (partidaFinalizada) return;
         this.turnoActual = turno;
         this.valorDado = dado;
         this.esperandoMovimiento = true;
@@ -334,7 +338,9 @@ public class TableroPanel extends JPanel {
                         Thread.sleep(1100);
                     } catch (InterruptedException ignored) {}
                     SwingUtilities.invokeLater(() -> {
-                        if (listener != null) listener.onMovimientoFinalizado();
+                        if (!partidaFinalizada && listener != null) {
+                            listener.onMovimientoFinalizado();
+                        }
                     });
                 }).start();
             }
@@ -433,7 +439,7 @@ public class TableroPanel extends JPanel {
     }
 
     private void manejarClick(int mx, int my) {
-        if (!esperandoMovimiento || animacionEnProgreso) return;
+        if (partidaFinalizada || !esperandoMovimiento || animacionEnProgreso) return;
 
         List<Ficha> movibles = getFichasMovibles(turnoActual, valorDado);
         for (Ficha f : movibles) {
@@ -445,6 +451,20 @@ public class TableroPanel extends JPanel {
                 ejecutarMovimientoConHilo(f, valorDado);
                 break;
             }
+        }
+    }
+
+    public boolean isPartidaFinalizada() {
+        return partidaFinalizada;
+    }
+
+    public void setPartidaFinalizada(boolean partidaFinalizada) {
+        this.partidaFinalizada = partidaFinalizada;
+        if (partidaFinalizada) {
+            this.esperandoMovimiento = false;
+            this.animacionEnProgreso = false;
+            setCursor(Cursor.getDefaultCursor());
+            repaint();
         }
     }
 
@@ -546,12 +566,17 @@ public class TableroPanel extends JPanel {
                     }
                 }
 
-                // Verificar si el jugador actual ganó
+                // Verificar si el jugador actual ganó (coronó sus 4 fichas)
                 if (getFichasCoronadas(ficha.jugador) == 4) {
-                    if (listener != null) {
-                        listener.onVictoria(NOMBRES_JUGADORES[ficha.jugador]);
-                    }
+                    this.partidaFinalizada = true;
+                    this.esperandoMovimiento = false;
                     animacionEnProgreso = false;
+                    SwingUtilities.invokeLater(() -> {
+                        repaint();
+                        if (listener != null) {
+                            listener.onVictoria(NOMBRES_JUGADORES[ficha.jugador]);
+                        }
+                    });
                     return;
                 }
 
@@ -561,7 +586,7 @@ public class TableroPanel extends JPanel {
                 animacionEnProgreso = false;
                 SwingUtilities.invokeLater(() -> {
                     repaint();
-                    if (listener != null) {
+                    if (!partidaFinalizada && listener != null) {
                         listener.onMovimientoFinalizado();
                     }
                 });

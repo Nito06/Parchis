@@ -36,6 +36,7 @@ public class JuegoPanel extends javax.swing.JPanel {
     private String codigoSala = "SALA-01";
     private EventClient eventClient;
     private int miIndiceJugador = 0;
+    private volatile boolean partidaFinalizada = false;
 
     public JuegoPanel() {
         initComponents();
@@ -51,13 +52,15 @@ public class JuegoPanel extends javax.swing.JPanel {
         tableroPanel.setTableroListener(new TableroPanel.TableroListener() {
             @Override
             public void onMovimientoFinalizado() {
-                actualizarEstadoFichas();
-                cambiarTurno();
+                if (!partidaFinalizada) {
+                    actualizarEstadoFichas();
+                    cambiarTurno();
+                }
             }
 
             @Override
             public void onFichaMovidaLocal(int jugador, int idFicha, int pasos) {
-                if (modoEnRed && eventClient != null) {
+                if (!partidaFinalizada && modoEnRed && eventClient != null) {
                     MovimientoDTO mov = new MovimientoDTO(jugador, idFicha, pasos);
                     EventoDTO evento = new EventoDTO(
                             TipoEvento.FICHA_MOVIDA,
@@ -77,7 +80,7 @@ public class JuegoPanel extends javax.swing.JPanel {
             @Override
             public void onFichaComida(String jugadorComedor, String jugadorComido) {
                 lblMensaje.setText("¡" + jugadorComedor + " se comió una ficha de " + jugadorComido + "!");
-                if (modoEnRed && eventClient != null) {
+                if (!partidaFinalizada && modoEnRed && eventClient != null) {
                     EventoDTO evento = new EventoDTO(
                             TipoEvento.FICHA_COMIDA,
                             miNombre,
@@ -90,21 +93,7 @@ public class JuegoPanel extends javax.swing.JPanel {
 
             @Override
             public void onVictoria(String jugadorGanador) {
-                lblMensaje.setText("¡¡VICTORIA!! " + jugadorGanador + " ha ganado la partida.");
-                btnLanzarDado.setEnabled(false);
-                if (modoEnRed && eventClient != null) {
-                    EventoDTO evento = new EventoDTO(
-                            TipoEvento.PARTIDA_FINALIZADA,
-                            miNombre,
-                            codigoSala,
-                            jugadorGanador
-                    );
-                    eventClient.publicarEvento(evento);
-                }
-                javax.swing.JOptionPane.showMessageDialog(JuegoPanel.this,
-                        "¡Felicidades a " + jugadorGanador + "! Ha completado el recorrido con todas sus fichas.",
-                        "Fin de la partida",
-                        javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                manejarFinDePartida(jugadorGanador);
             }
         });
     }
@@ -247,6 +236,7 @@ public class JuegoPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_btnLanzarDadoActionPerformed
 
     private void lanzarDadoYProcesar() {
+        if (partidaFinalizada) return;
         btnLanzarDado.setEnabled(false);
         lblMensaje.setText("Lanzando dado...");
 
@@ -255,6 +245,10 @@ public class JuegoPanel extends javax.swing.JPanel {
         } catch (Exception ignored) {}
 
         Timer timer = new Timer(500, evt -> {
+            if (partidaFinalizada) {
+                ((Timer) evt.getSource()).stop();
+                return;
+            }
             valorDado = (int) (Math.random() * 6) + 1;
             try {
                 String ruta = "/Elementos/Dado_" + valorDado + ".png";
@@ -328,6 +322,7 @@ public class JuegoPanel extends javax.swing.JPanel {
     }
 
     public void inicializarJuego(int numJugadores, String colorElegido) {
+        this.partidaFinalizada = false;
         this.modoEnRed = false;
         this.numeroJugadoresTotales = numJugadores;
         this.colorHumano = colorElegido;
@@ -339,6 +334,7 @@ public class JuegoPanel extends javax.swing.JPanel {
     }
 
     public void inicializarJuegoEnRed(String miColor, String nombreJugador, EventClient client, boolean esHost, String sala, List<String> coloresActivos) {
+        this.partidaFinalizada = false;
         this.modoEnRed = true;
         this.esHost = esHost;
         this.miNombre = (nombreJugador != null && !nombreJugador.isBlank()) ? nombreJugador : (esHost ? "Host" : "Invitado");
@@ -380,6 +376,68 @@ public class JuegoPanel extends javax.swing.JPanel {
         prepararTurno();
     }
 
+    public void manejarFinDePartida(String jugadorGanador) {
+        if (partidaFinalizada) return;
+        this.partidaFinalizada = true;
+        tableroPanel.setPartidaFinalizada(true);
+        btnLanzarDado.setEnabled(false);
+
+        lblMensaje.setText("¡¡VICTORIA!! " + jugadorGanador + " ha ganado la partida.");
+
+        if (modoEnRed && eventClient != null) {
+            EventoDTO evento = new EventoDTO(
+                    TipoEvento.PARTIDA_FINALIZADA,
+                    miNombre,
+                    codigoSala,
+                    jugadorGanador
+            );
+            eventClient.publicarEvento(evento);
+        }
+
+        SwingUtilities.invokeLater(() -> {
+            String[] opciones = {"Jugar de nuevo", "Volver al Menú", "Salir"};
+            int seleccion = javax.swing.JOptionPane.showOptionDialog(
+                    JuegoPanel.this,
+                    "¡¡PARTIDA FINALIZADA!!\n\nEl ganador es: " + jugadorGanador + " (coronó sus 4 fichas en la meta).\n¿Qué deseas hacer?",
+                    "Fin de la partida - ¡Victoria!",
+                    javax.swing.JOptionPane.DEFAULT_OPTION,
+                    javax.swing.JOptionPane.INFORMATION_MESSAGE,
+                    null,
+                    opciones,
+                    opciones[0]
+            );
+
+            if (seleccion == 0) {
+                // Jugar de nuevo
+                if (modoEnRed) {
+                    if (eventClient != null) {
+                        eventClient.desconectar();
+                    }
+                    Window ventanaActual = SwingUtilities.getWindowAncestor(JuegoPanel.this);
+                    if (ventanaActual != null) {
+                        ventanaActual.dispose();
+                    }
+                    new ParchisFames().setVisible(true);
+                } else {
+                    inicializarJuego(numeroJugadoresTotales, colorHumano);
+                }
+            } else if (seleccion == 1) {
+                // Volver al Menú
+                if (modoEnRed && eventClient != null) {
+                    eventClient.desconectar();
+                }
+                Window ventanaActual = SwingUtilities.getWindowAncestor(JuegoPanel.this);
+                if (ventanaActual != null) {
+                    ventanaActual.dispose();
+                }
+                new ParchisFames().setVisible(true);
+            } else if (seleccion == 2) {
+                // Salir
+                System.exit(0);
+            }
+        });
+    }
+
     public void procesarEventoRed(EventoDTO evento) {
         if (evento == null) return;
         if (miNombre != null && miNombre.equals(evento.getEmisor())) {
@@ -403,7 +461,9 @@ public class JuegoPanel extends javax.swing.JPanel {
                             lblMensaje.setText(evento.getEmisor() + " sacó un " + dado + " pero no puede mover. Pasa el turno.");
                             Timer t = new Timer(1200, e -> {
                                 ((Timer) e.getSource()).stop();
-                                cambiarTurno();
+                                if (!partidaFinalizada) {
+                                    cambiarTurno();
+                                }
                             });
                             t.setRepeats(false);
                             t.start();
@@ -420,8 +480,8 @@ public class JuegoPanel extends javax.swing.JPanel {
                     lblMensaje.setText("¡" + evento.getPayload() + "!");
                 }
                 case PARTIDA_FINALIZADA -> {
-                    lblMensaje.setText("¡Partida finalizada! Ganador: " + evento.getPayload());
-                    btnLanzarDado.setEnabled(false);
+                    String ganador = evento.getPayload() != null ? evento.getPayload().toString() : "Rival";
+                    manejarFinDePartida(ganador);
                 }
                 default -> {}
             }
@@ -452,6 +512,11 @@ public class JuegoPanel extends javax.swing.JPanel {
     }
 
     private void prepararTurno() {
+        if (partidaFinalizada) {
+            btnLanzarDado.setEnabled(false);
+            return;
+        }
+
         yaLanzoDado = false;
 
         switch (turnoActual) {
@@ -496,10 +561,16 @@ public class JuegoPanel extends javax.swing.JPanel {
     }
 
     private void ejecutarTurnoBot() {
+        if (partidaFinalizada) return;
+
         Thread botThread = new Thread(() -> {
             try {
+                if (partidaFinalizada) return;
                 Thread.sleep(800);
+                if (partidaFinalizada) return;
+
                 SwingUtilities.invokeLater(() -> {
+                    if (partidaFinalizada) return;
                     lblMensaje.setText(TableroPanel.NOMBRES_JUGADORES[turnoActual] + " está lanzando el dado...");
                     try {
                         jLabel1.setIcon(new ImageIcon(getClass().getResource("/Elementos/Girando_Dado.png")));
@@ -507,9 +578,11 @@ public class JuegoPanel extends javax.swing.JPanel {
                 });
 
                 Thread.sleep(600);
+                if (partidaFinalizada) return;
                 valorDado = (int) (Math.random() * 6) + 1;
 
                 SwingUtilities.invokeLater(() -> {
+                    if (partidaFinalizada) return;
                     try {
                         String ruta = "/Elementos/Dado_" + valorDado + ".png";
                         jLabel1.setIcon(new ImageIcon(getClass().getResource(ruta)));
@@ -517,15 +590,20 @@ public class JuegoPanel extends javax.swing.JPanel {
                 });
 
                 Thread.sleep(500);
+                if (partidaFinalizada) return;
 
                 // Obtener fichas movibles del bot
                 List<TableroPanel.Ficha> movibles = tableroPanel.getFichasMovibles(turnoActual, valorDado);
                 if (movibles.isEmpty()) {
                     SwingUtilities.invokeLater(() -> {
-                        lblMensaje.setText(TableroPanel.NOMBRES_JUGADORES[turnoActual] + " sacó un " + valorDado + " pero no puede mover.");
+                        if (!partidaFinalizada) {
+                            lblMensaje.setText(TableroPanel.NOMBRES_JUGADORES[turnoActual] + " sacó un " + valorDado + " pero no puede mover.");
+                        }
                     });
                     Thread.sleep(1100);
-                    SwingUtilities.invokeLater(this::cambiarTurno);
+                    if (!partidaFinalizada) {
+                        SwingUtilities.invokeLater(this::cambiarTurno);
+                    }
                 } else {
                     // Elegir la mejor ficha: priorizar sacar de base o la más adelantada
                     TableroPanel.Ficha seleccionada = movibles.get(0);
@@ -540,8 +618,10 @@ public class JuegoPanel extends javax.swing.JPanel {
 
                     TableroPanel.Ficha finalFicha = seleccionada;
                     SwingUtilities.invokeLater(() -> {
-                        lblMensaje.setText(TableroPanel.NOMBRES_JUGADORES[turnoActual] + " mueve su ficha " + (finalFicha.id + 1) + ".");
-                        tableroPanel.ejecutarMovimientoConHilo(finalFicha, valorDado);
+                        if (!partidaFinalizada) {
+                            lblMensaje.setText(TableroPanel.NOMBRES_JUGADORES[turnoActual] + " mueve su ficha " + (finalFicha.id + 1) + ".");
+                            tableroPanel.ejecutarMovimientoConHilo(finalFicha, valorDado);
+                        }
                     });
                 }
 
@@ -553,6 +633,8 @@ public class JuegoPanel extends javax.swing.JPanel {
     }
 
     private void cambiarTurno() {
+        if (partidaFinalizada) return;
+
         do {
             turnoActual++;
             if (turnoActual > 3) {
